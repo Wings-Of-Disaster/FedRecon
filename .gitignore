@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Outputs
+outputs/
+results/
+visualizations/
+*.json
+*.csv
+
+# Large local artifacts
+checkpoints/*.pt
+checkpoints/*.pth
+checkpoints/*.rar
+data/
