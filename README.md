@@ -41,10 +41,13 @@ cub_eval/
 external/
   mmvaeplus/                    # Reference MVAE+ repository
   fed-multimodal/               # Reference federated multimodal repository
+checkpoints/
+  fedrecon_cub_mapping.pt       # Trained FedRecon CUB mapping checkpoint
+  fedrecon_cub_mapping.tar.gz   # Compressed checkpoint archive
 requirements.txt
 ```
 
-We also provide a trained FedRecon mapping checkpoint for reference. The checkpoint contains two MLP mappings:
+We provide a trained FedRecon mapping checkpoint for reference. The checkpoint contains two MLP mappings:
 
 - `T_0_1`: image latent -> caption latent
 - `T_1_0`: caption latent -> image latent
@@ -66,12 +69,12 @@ python cub_eval/evaluate_cub_mapping.py \
   --data-root /path/to/mmvaeplus/src/data \
   --model-ckpt /path/to/model_50.rar \
   --args-path /path/to/args.rar \
-  --mapping-ckpt /path/to/mapping_checkpoint.pt \
+  --mapping-ckpt checkpoints/fedrecon_cub_mapping.pt \
   --split test \
   --output-json results/cub_test_metrics.json
 ```
 
-The script generates the target-modality latent and evaluates it by nearest-neighbor retrieval against ground-truth CUB samples. It reports Top@1 to Top@10, median rank, and mean rank for both directions.
+The script reports both the no-mapping baseline and the FedRecon mapping result. It generates the target-modality latent and evaluates it by nearest-neighbor retrieval against ground-truth CUB samples. It reports Top@1 to Top@10, median rank, and mean rank for both directions.
 
 ## Visualization
 
@@ -83,7 +86,7 @@ python cub_eval/visualize_cub_retrieval.py \
   --data-root /path/to/mmvaeplus/src/data \
   --model-ckpt /path/to/model_50.rar \
   --args-path /path/to/args.rar \
-  --mapping-ckpt /path/to/mapping_checkpoint.pt \
+  --mapping-ckpt checkpoints/fedrecon_cub_mapping.pt \
   --split test \
   --num-queries 8 \
   --top-k 5 \

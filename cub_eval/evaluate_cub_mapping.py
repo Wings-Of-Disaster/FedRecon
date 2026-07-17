@@ -119,7 +119,26 @@ def print_metrics(name, metrics):
     print(f'{name} median={metrics["median_rank"]} mean={metrics["mean_rank"]:.1f}')
 
 
-def evaluate(data, maps, device):
+def package_metrics(ranks01, ranks10):
+    m01 = summarize(ranks01)
+    m10 = summarize(ranks10)
+    avg = {f'top{k}': (m01[f'top{k}'] + m10[f'top{k}']) / 2.0 for k in range(1, 11)}
+    return {'m0_to_m1': m01, 'm1_to_m0': m10, 'avg': avg}
+
+
+def evaluate_baseline(data):
+    z0_img = data['z0_img']
+    z1 = data['z1']
+    unique = data['unique_ids']
+    image_ids = data['image_ids']
+    sim01 = F.normalize(z0_img, dim=-1) @ F.normalize(z1, dim=-1).T
+    ranks01 = ranks_image(sim01, unique, image_ids)
+    sim10 = F.normalize(z1, dim=-1) @ F.normalize(z0_img, dim=-1).T
+    ranks10 = ranks_image(sim10, image_ids, unique)
+    return package_metrics(ranks01, ranks10)
+
+
+def evaluate_mapping(data, maps, device):
     z0_img = data['z0_img']
     z1 = data['z1']
     unique = data['unique_ids']
@@ -132,11 +151,7 @@ def evaluate(data, maps, device):
         mapped_cap = maps['T_1_0'](z1.to(device)).cpu()
         sim10 = F.normalize(mapped_cap, dim=-1) @ F.normalize(z0_img, dim=-1).T
         ranks10 = ranks_image(sim10, image_ids, unique)
-
-    m01 = summarize(ranks01)
-    m10 = summarize(ranks10)
-    avg = {f'top{k}': (m01[f'top{k}'] + m10[f'top{k}']) / 2.0 for k in range(1, 11)}
-    return {'m0_to_m1': m01, 'm1_to_m0': m10, 'avg': avg}
+    return package_metrics(ranks01, ranks10)
 
 
 def main():
@@ -145,13 +160,21 @@ def main():
     model, saved_args = load_model(args, models)
     dim = saved_args.latent_dim_w + saved_args.latent_dim_z
     data = collect_latents(model, args.split, args.batch_size, args.device, unpack_data_cubIC)
+    baseline = evaluate_baseline(data)
     maps = load_mapping(args.mapping_ckpt, dim, args.hidden_dim, args.device)
-    result = evaluate(data, maps, args.device)
+    fedrecon = evaluate_mapping(data, maps, args.device)
 
-    print_metrics('m0->m1', result['m0_to_m1'])
-    print_metrics('m1->m0', result['m1_to_m0'])
-    avg_line = ' '.join(f'top{k}={result["avg"][f"top{k}"]:.2f}' for k in range(1, 11))
-    print(f'avg {avg_line}')
+    print('\n== Baseline: no mapping ==')
+    print_metrics('baseline m0->m1', baseline['m0_to_m1'])
+    print_metrics('baseline m1->m0', baseline['m1_to_m0'])
+    baseline_avg = ' '.join(f'top{k}={baseline["avg"][f"top{k}"]:.2f}' for k in range(1, 11))
+    print(f'baseline avg {baseline_avg}')
+
+    print('\n== FedRecon mapping ==')
+    print_metrics('fedrecon m0->m1', fedrecon['m0_to_m1'])
+    print_metrics('fedrecon m1->m0', fedrecon['m1_to_m0'])
+    fedrecon_avg = ' '.join(f'top{k}={fedrecon["avg"][f"top{k}"]:.2f}' for k in range(1, 11))
+    print(f'fedrecon avg {fedrecon_avg}')
 
     if args.output_json:
         out = Path(args.output_json)
@@ -160,7 +183,7 @@ def main():
             'split': args.split,
             'num_images': int(data['z0_img'].size(0)),
             'num_captions': int(data['z1'].size(0)),
-            'metrics': result,
+            'metrics': {'baseline': baseline, 'fedrecon': fedrecon},
         }
         out.write_text(json.dumps(payload, indent=2), encoding='utf-8')
         print(f'wrote {out}')
