@@ -2,7 +2,7 @@
 
 This is the official implementation of **FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments**.
 
-This release provides the CUB Image-Captions evaluation code for FedRecon. We provide scripts to evaluate a trained FedRecon mapping checkpoint and visualize cross-modal retrieval results on CUB.
+This release provides the CUB Image-Captions cross-modal generation evaluation code for FedRecon. We provide scripts to evaluate a trained FedRecon mapping checkpoint and visualize cross-modal generation results on CUB.
 
 We include the following upstream repositories as references:
 
@@ -36,8 +36,8 @@ You also need the CUB Image-Captions data prepared in the MMVAE+ format.
 
 ```text
 cub_eval/
-  evaluate_cub_mapping.py       # CUB retrieval evaluation
-  visualize_cub_retrieval.py    # CUB retrieval visualization
+  evaluate_cub_mapping.py       # CUB cross-modal generation evaluation
+  visualize_cub_retrieval.py    # CUB cross-modal generation visualization
 external/
   mmvaeplus/                    # Reference MVAE+ repository
   fed-multimodal/               # Reference federated multimodal repository
@@ -53,12 +53,12 @@ In CUB Image-Captions:
 
 - `m0` is the image modality.
 - `m1` is the caption modality.
-- `m0 -> m1` is image-to-caption retrieval.
-- `m1 -> m0` is caption-to-image retrieval.
+- `m0 -> m1` generates a caption-side latent from an image latent, then evaluates it with nearest-neighbor matching.
+- `m1 -> m0` generates an image-side latent from a caption latent, then evaluates it with nearest-neighbor matching.
 
 ## CUB Evaluation
 
-Run quantitative retrieval evaluation with:
+Run quantitative cross-modal generation evaluation with:
 
 ```bash
 python cub_eval/evaluate_cub_mapping.py \
@@ -71,11 +71,11 @@ python cub_eval/evaluate_cub_mapping.py \
   --output-json results/cub_test_metrics.json
 ```
 
-The script reports Top@1 to Top@10, median rank, and mean rank for both retrieval directions.
+The script generates the target-modality latent and evaluates it by nearest-neighbor retrieval against ground-truth CUB samples. It reports Top@1 to Top@10, median rank, and mean rank for both directions.
 
 ## Visualization
 
-Generate qualitative retrieval examples with:
+Generate qualitative cross-modal generation examples with:
 
 ```bash
 python cub_eval/visualize_cub_retrieval.py \
@@ -90,8 +90,8 @@ python cub_eval/visualize_cub_retrieval.py \
   --out-dir visualizations/cub_test
 ```
 
-The script saves image-to-caption panels, caption-to-image retrieval grids, and a `retrieval_examples.json` file.
+The script saves image-to-caption generation panels, caption-to-image generation grids, and a `retrieval_examples.json` file with nearest-neighbor matches.
 
 ## Notes
 
-Each CUB image has ten captions. For image-to-caption retrieval, any caption belonging to the query image is counted as correct. For caption-to-image retrieval, the paired image is counted as correct.
+Each CUB image has ten captions. For image-to-caption evaluation, any caption belonging to the query image is counted as correct. For caption-to-image evaluation, the paired image is counted as correct.
