@@ -1,35 +1,45 @@
 # FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments
 
-This repository provides the official release of the CUB Image-Captions evaluation utilities for **FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments**.
+This is the official implementation of **FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments**.
 
-FedRecon studies missing-modality reconstruction and cross-modal retrieval under heterogeneous multimodal settings. In this release, we provide a compact evaluation package for checking a trained FedRecon mapping checkpoint on the CUB Image-Captions benchmark.
+This release provides the CUB Image-Captions evaluation code for FedRecon. We provide scripts to evaluate a trained FedRecon mapping checkpoint and visualize cross-modal retrieval results on CUB.
 
-## Release Scope
-
-This repository includes:
-
-- CUB image-to-caption and caption-to-image retrieval evaluation.
-- Top@1 to Top@10, median rank, and mean rank reporting.
-- Retrieval visualization scripts for qualitative inspection.
-- Path-agnostic command-line interfaces for local checkpoints and datasets.
-
-The full training pipeline is not included in this release because it depends on experiment-specific infrastructure and third-party training frameworks that are maintained separately. We release the CUB evaluation code to make checkpoint evaluation and qualitative analysis straightforward and reproducible.
-
-For the underlying MVAE+ model implementation, please refer to the [mmvaeplus](https://github.com/epalu/mmvaeplus) repository. For heterogeneous federated multimodal experiments, please refer to the [fed-multimodal](https://github.com/usc-sail/fed-multimodal) framework.
+For the MVAE+ backbone, please refer to the [mmvaeplus](https://github.com/epalu/mmvaeplus) repository. For heterogeneous federated multimodal experiments, please refer to the [fed-multimodal](https://github.com/usc-sail/fed-multimodal) framework.
 
 ## Environment Setup
 
-Install the lightweight evaluation dependencies with:
+Install the required dependencies with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-The scripts also require a local MMVAE+ source tree and local CUB Image-Captions data prepared in the format expected by MMVAE+.
+You also need a local MMVAE+ source tree and the CUB Image-Captions data prepared in the MMVAE+ format.
+
+## Released Files
+
+```text
+cub_eval/
+  evaluate_cub_mapping.py       # CUB retrieval evaluation
+  visualize_cub_retrieval.py    # CUB retrieval visualization
+requirements.txt
+```
+
+We also provide a trained FedRecon mapping checkpoint for reference. The checkpoint contains two MLP mappings:
+
+- `T_0_1`: image latent -> caption latent
+- `T_1_0`: caption latent -> image latent
+
+In CUB Image-Captions:
+
+- `m0` is the image modality.
+- `m1` is the caption modality.
+- `m0 -> m1` is image-to-caption retrieval.
+- `m1 -> m0` is caption-to-image retrieval.
 
 ## CUB Evaluation
 
-Evaluate a trained FedRecon mapping checkpoint on CUB Image-Captions:
+Run quantitative retrieval evaluation with:
 
 ```bash
 python cub_eval/evaluate_cub_mapping.py \
@@ -42,18 +52,11 @@ python cub_eval/evaluate_cub_mapping.py \
   --output-json results/cub_test_metrics.json
 ```
 
-In the CUB setup used here:
+The script reports Top@1 to Top@10, median rank, and mean rank for both retrieval directions.
 
-- `m0` denotes the image modality.
-- `m1` denotes the caption modality.
-- `m0 -> m1` evaluates image-to-caption retrieval.
-- `m1 -> m0` evaluates caption-to-image retrieval.
+## Visualization
 
-Each CUB image has ten captions. For image-to-caption retrieval, any caption belonging to the query image is counted as correct. For caption-to-image retrieval, the paired image is counted as correct.
-
-## Qualitative Visualization
-
-Generate retrieval examples for inspection:
+Generate qualitative retrieval examples with:
 
 ```bash
 python cub_eval/visualize_cub_retrieval.py \
@@ -68,13 +71,8 @@ python cub_eval/visualize_cub_retrieval.py \
   --out-dir visualizations/cub_test
 ```
 
-The visualization script writes image-to-caption panels, caption-to-image grids, and a `retrieval_examples.json` summary file.
+The script saves image-to-caption panels, caption-to-image retrieval grids, and a `retrieval_examples.json` file.
 
-## Repository Layout
+## Notes
 
-```text
-cub_eval/
-  evaluate_cub_mapping.py       # Quantitative CUB retrieval evaluation
-  visualize_cub_retrieval.py    # Qualitative CUB retrieval visualization
-requirements.txt                # Evaluation dependencies
-```
+Each CUB image has ten captions. For image-to-caption retrieval, any caption belonging to the query image is counted as correct. For caption-to-image retrieval, the paired image is counted as correct.
