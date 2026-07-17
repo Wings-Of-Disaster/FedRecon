@@ -1,4 +1,13 @@
-# FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments
+<h1 align="center">FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments</h1>
+
+<p align="center">
+    <a href="https://arxiv.org/abs/2504.09941">
+        <img alt="Build" src="http://img.shields.io/badge/cs.LG-arXiv%3A2504.09941-B31B1B.svg">
+    </a>
+    <a href="https://github.com/Wings-Of-Disaster/FedRecon">
+        <img alt="Build" src="https://img.shields.io/badge/Github-Code-blue">
+    </a>
+</p>
 
 This is the official implementation of **FedRecon: Missing Modality Reconstruction in Heterogeneous Distributed Environments**.
 
