@@ -4,9 +4,25 @@ This is the official implementation of **FedRecon: Missing Modality Reconstructi
 
 This release provides the CUB Image-Captions evaluation code for FedRecon. We provide scripts to evaluate a trained FedRecon mapping checkpoint and visualize cross-modal retrieval results on CUB.
 
-For the MVAE+ backbone, please refer to the [mmvaeplus](https://github.com/epalu/mmvaeplus) repository. For heterogeneous federated multimodal experiments, please refer to the [fed-multimodal](https://github.com/usc-sail/fed-multimodal) framework.
+We include the following upstream repositories as references:
+
+- [mmvaeplus](https://github.com/epalu/mmvaeplus): MVAE+ backbone for multimodal latent representations.
+- [fed-multimodal](https://github.com/usc-sail/fed-multimodal): heterogeneous federated multimodal learning framework.
+
 
 ## Environment Setup
+
+Clone this repository with submodules:
+
+```bash
+git clone --recursive https://github.com/Wings-Of-Disaster/FedRecon.git
+```
+
+If you have already cloned the repository, initialize the reference repositories with:
+
+```bash
+git submodule update --init --recursive
+```
 
 Install the required dependencies with:
 
@@ -14,7 +30,7 @@ Install the required dependencies with:
 pip install -r requirements.txt
 ```
 
-You also need a local MMVAE+ source tree and the CUB Image-Captions data prepared in the MMVAE+ format.
+You also need the CUB Image-Captions data prepared in the MMVAE+ format.
 
 ## Released Files
 
@@ -22,6 +38,9 @@ You also need a local MMVAE+ source tree and the CUB Image-Captions data prepare
 cub_eval/
   evaluate_cub_mapping.py       # CUB retrieval evaluation
   visualize_cub_retrieval.py    # CUB retrieval visualization
+external/
+  mmvaeplus/                    # Reference MVAE+ repository
+  fed-multimodal/               # Reference federated multimodal repository
 requirements.txt
 ```
 
@@ -43,7 +62,7 @@ Run quantitative retrieval evaluation with:
 
 ```bash
 python cub_eval/evaluate_cub_mapping.py \
-  --mmvae-src /path/to/mmvaeplus/src \
+  --mmvae-src external/mmvaeplus/src \
   --data-root /path/to/mmvaeplus/src/data \
   --model-ckpt /path/to/model_50.rar \
   --args-path /path/to/args.rar \
@@ -60,7 +79,7 @@ Generate qualitative retrieval examples with:
 
 ```bash
 python cub_eval/visualize_cub_retrieval.py \
-  --mmvae-src /path/to/mmvaeplus/src \
+  --mmvae-src external/mmvaeplus/src \
   --data-root /path/to/mmvaeplus/src/data \
   --model-ckpt /path/to/model_50.rar \
   --args-path /path/to/args.rar \
