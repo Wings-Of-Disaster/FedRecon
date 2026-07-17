@@ -43,7 +43,6 @@ external/
   fed-multimodal/               # Reference federated multimodal repository
 checkpoints/
   fedrecon_cub_mapping.pt       # Trained FedRecon CUB mapping checkpoint
-  fedrecon_cub_mapping.tar.gz   # Compressed checkpoint archive
 requirements.txt
 ```
 

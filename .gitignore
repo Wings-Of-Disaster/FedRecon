@@ -16,5 +16,4 @@ checkpoints/*.pt
 checkpoints/*.pth
 checkpoints/*.rar
 !checkpoints/fedrecon_cub_mapping.pt
-!checkpoints/fedrecon_cub_mapping.tar.gz
 data/
