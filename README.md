@@ -42,6 +42,8 @@ external/
   mmvaeplus/                    # Reference MVAE+ repository
   fed-multimodal/               # Reference federated multimodal repository
 checkpoints/
+  mmvae_cub_model_50.rar        # Trained MMVAE+ CUB backbone checkpoint
+  mmvae_cub_args.rar            # MMVAE+ CUB checkpoint arguments
   fedrecon_cub_mapping.pt       # Trained FedRecon CUB mapping checkpoint
 requirements.txt
 ```
@@ -66,8 +68,8 @@ Run quantitative cross-modal generation evaluation with:
 python cub_eval/evaluate_cub_mapping.py \
   --mmvae-src external/mmvaeplus/src \
   --data-root /path/to/mmvaeplus/src/data \
-  --model-ckpt /path/to/model_50.rar \
-  --args-path /path/to/args.rar \
+  --model-ckpt checkpoints/mmvae_cub_model_50.rar \
+  --args-path checkpoints/mmvae_cub_args.rar \
   --mapping-ckpt checkpoints/fedrecon_cub_mapping.pt \
   --split test \
   --output-json results/cub_test_metrics.json
@@ -83,8 +85,8 @@ Generate qualitative cross-modal generation examples with:
 python cub_eval/visualize_cub_retrieval.py \
   --mmvae-src external/mmvaeplus/src \
   --data-root /path/to/mmvaeplus/src/data \
-  --model-ckpt /path/to/model_50.rar \
-  --args-path /path/to/args.rar \
+  --model-ckpt checkpoints/mmvae_cub_model_50.rar \
+  --args-path checkpoints/mmvae_cub_args.rar \
   --mapping-ckpt checkpoints/fedrecon_cub_mapping.pt \
   --split test \
   --num-queries 8 \

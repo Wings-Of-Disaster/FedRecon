@@ -16,4 +16,6 @@ checkpoints/*.pt
 checkpoints/*.pth
 checkpoints/*.rar
 !checkpoints/fedrecon_cub_mapping.pt
+!checkpoints/mmvae_cub_model_50.rar
+!checkpoints/mmvae_cub_args.rar
 data/
