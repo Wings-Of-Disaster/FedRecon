@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Outputs
+outputs/
+results/
+visualizations/
+*.json
+*.csv
+
+# Large local artifacts
+checkpoints/*.pt
+checkpoints/*.pth
+checkpoints/*.rar
+!checkpoints/fedrecon_cub_mapping.pt
+!checkpoints/mmvae_cub_model_50.rar
+!checkpoints/mmvae_cub_args.rar
+data/

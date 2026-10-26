@@ -1,0 +1,6 @@
+[submodule "external/mmvaeplus"]
+	path = external/mmvaeplus
+	url = https://github.com/epalu/mmvaeplus.git
+[submodule "external/fed-multimodal"]
+	path = external/fed-multimodal
+	url = https://github.com/usc-sail/fed-multimodal.git
